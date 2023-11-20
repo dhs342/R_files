@@ -7,5 +7,9 @@
 - Resume: [https://tinyurl.com/dhsresume](https://tinyurl.com/dhsresume)
 
 <h3 align="left">Notes about the files in this github</h3>
+
+- brazil.csv, brazil.rmd, Mexico_Merge.csv, mexico.rmd: These are associated R scripts and CSVs for my senior thesis. Each R script contains code for respective regressions and variable manipulations.
+
+- al-2022-precinct-manipulate: After dataset cleanup, this is the end result for the 2022 Alabama Republican primaries.
 <p align="left">
 </p>

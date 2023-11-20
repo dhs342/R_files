@@ -1,5 +1,5 @@
 # Welcome!
-<h1 align="center">Hi, I'm Daniel!</h1>
+<h1 align="center">I'm Daniel!</h1>
 <h3 align="center">I'm from Atlanta, Georgia, and I'm incredibly interested in quantitative political science research, namely distributive politics, institutions, and the welfare state.</h3>
 
 - Reach me at: **dhs342@sas.upenn.edu**

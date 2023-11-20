@@ -1,0 +1,83 @@
+---
+title: "Statistical Testing"
+author: "Daniel Sun"
+date: "2023-03-25"
+output: pdf_document
+---
+
+```{r}
+cp8fixci <- confint(cp8fix)
+cp8fixtable <- coef(summary(cp8fix))
+p <- pnorm(abs(cp8fixtable[, "t value"]), lower.tail = FALSE) * 2
+cp8fixtable <- cbind(cp8fixtable, "p value" = p)
+cp8fixtable
+cp8fixci
+
+
+screenreg(list(cp8fix, cp13fix, cp7fix, cp6fix, cp20fix),
+          custom.model.names = c("Community" ,"Party Mtg","Parent", "RelOrgs", "WomenGrp"),
+          p.auto = F,
+          align = T,
+          type = "text",
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          dep.var.caption = c("Civic Engagement"),
+          ci.force = T,
+)
+
+screenreg(list(b32fix, b13fix, b21fix, b21afix),
+          custom.model.names = c("LGovTrust", "LegTrust", "PolTrust", "ExecTrust"),
+          p.auto = F,
+          align = T,
+          type = "text",
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          dep.var.caption = c("Trust"),
+          ci.force = T,
+)
+
+screenreg(list(prot3fix, vb2fix, pol1fix, gi0fix, vb10fix),
+          custom.model.names = c("Protest", "VotedLastYear", "PolInterest", "WatchNews", "PolID"),
+          ci.force = T)
+
+screenreg(list(cp8fixint, cp13fixint, cp7fixint, cp6fixint, cp20fixint),
+          custom.model.names = c("Community", "PartyMtg", "Parent", "RelOrgs", "WomenGrp"),
+          ci.force = T)
+
+screenreg(list(prot3fixint, vb2fixint, pol1fixint, gi0fixint, vb10fixint),
+          custom.model.names = c("Protest", "VotedLastYear", "PolInterest", "WatchNews", "PolID"),
+          ci.force = T)
+
+screenreg(list(b32fixint, b13fixint, b21fixint, b21afixint),
+          custom.model.names = c("LGovTrust", "LegTrust", "PolTrust", "ExecTrust"),
+          ci.force =T)
+```
+
+```{r}
+screenreg(list(cp8bfix, cp13bfix, cp7bfix, cp6bfix, cp20bfix),
+          custom.model.names = c("Community" ,"Party Mtg","Parent", "RelOrgs", "WomenGrp"),
+          ci.force = T)
+
+screenreg(list(prot3bfix, vb2bfix, pol1bfix, gl0bfix, vb10bfix),
+          custom.model.names = c("Protest", "VotedLastYear", "PolInterest", "WatchNews", "PolID"),
+          ci.force = T)
+
+screenreg(list(b32bfix, b13bfix, b21bfix, b21abfix),
+          custom.model.names = c("LGovTrust", "LegTrust", "PolTrust", "ExecTrust"),
+          ci.force = T)
+
+screenreg(list(cp8bfixint, cp13bfixint, cp7bfixint, cp6bfixint, cp20bfixint),
+          custom.model.names = c("Community", "PartyMtg", "Parent", "RelOrgs", "WomenGrp"),
+          ci.force = T)
+
+screenreg(list(prot3bfixint, vb2bfixint, pol1bfixint, gl0bfixint, vb10bfixint),
+          custom.model.names = c("Protest", "VotedLastYear", "PolInterest", "WatchNews", "PolID"),
+          ci.force = T)
+
+screenreg(list(b32bfixint, b13bfixint, b21bfixint, b21abfixint),
+          custom.model.names = c("LGovTrust", "LegTrust", "PolTrust", "ExecTrust"),
+          ci.force =T)
+```
+

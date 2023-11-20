@@ -13,5 +13,7 @@
 - al-2022-precinct-manipulate: After dataset cleanup, this is the end result for the 2022 Alabama Republican primaries.
 
 - redo.rmd, all5_test.csv: Renamed some precincts due to inconsistent naming across Alabama primary years, and then merged al-2022 end product with other years to create a rough merge across all years.
+
+- statistical_testing.R: Associated statistical testing for senior thesis, including confidence interval tests, AIC, BIC, log-likelihood, and number of observations for both Mexico and Brazil merged datasets from 2010-2018.
 <p align="left">
 </p>

@@ -1,0 +1,768 @@
+---
+title: "mexico"
+output:
+  pdf_document:
+    keep_tex: yes
+  word_document: default
+date: "2023-02-24"
+header-includes: \usepackage{dcolumn}
+---
+
+```{r, echo = FALSE}
+Mexico_Merge.1 <- read.csv("C:/Users/danie/Downloads/Mexico_Merge-1.csv")
+mexico <- Mexico_Merge.1
+library(MASS)
+library(stargazer)
+library(pglm)
+library(texreg)
+library(lmtest)
+```
+
+```{r}
+#create year dummy variables
+mexico$y2010 <- ifelse(mexico$year == 2010, 1, 0)
+mexico$y2012 <- ifelse(mexico$year == 2012, 1, 0)
+mexico$y2014 <- ifelse(mexico$year == 2014, 1, 0)
+mexico$y2016 <- ifelse(mexico$year == 2016, 1, 0)
+mexico$y2018 <- ifelse(mexico$year == 2018, 1, 0)
+mexico$norte <- ifelse(mexico$estratopri == 101, 1, 0)
+mexico$vb10 <- ifelse(mexico$vb10 == 1, 1, 0)
+mexico$cct1 <- ifelse(mexico$cct1 == 1, 1, 0)
+mexico$q1 <- ifelse(mexico$q1 == 1, 1, 0)
+mexico$ur <- ifelse(mexico$ur == 1, 1, 0)
+mexico$prot3 <- ifelse(mexico$prot3 == 1, 1, 0)
+mexico$vb2 <- ifelse(mexico$vb2 == 1, 1, 0)
+
+
+#save the data
+save(mexico, file="mexico.RData")
+```
+
+```{r}
+#this is the one!!!!!
+mexico$id <- NULL
+names(mexico)[names(mexico) == "X"] <- "id"
+#create new dataframe omiting NAs in independent variable
+mexico2 <- mexico[!is.na(mexico$cct1),]
+
+#recode dependent variable
+mexico2$gi0F <- ifelse(
+  mexico2$gi0 == 5, "Never",
+  ifelse(
+    mexico2$gi0 == 4, "Rarely", 
+    ifelse(
+      mexico2$gi0 == 3, "Somewhat Likely",
+      ifelse(
+        mexico2$gi0 == 2, "Likely", 
+        ifelse(
+          mexico2$gi0 == 1, "Daily", NA
+        )))))
+
+mexico2$cp8F <- ifelse(
+  mexico2$cp8 == 4, "Unlikely", 
+  ifelse(
+    mexico2$cp8 == 3, "Somewhat Likely",
+    ifelse(
+      mexico2$cp8 == 2, "Likely", 
+      ifelse(
+        mexico2$cp8 == 1, "Very Likely", NA
+        ))))
+
+mexico2$cp13F <- ifelse(
+ mexico2$cp13 == 4, "Unlikely", 
+  ifelse(
+    mexico2$cp13 == 3, "Somewhat Likely",
+    ifelse(
+      mexico2$cp13 == 2, "Likely", 
+      ifelse(
+        mexico2$cp13 == 1, "Very Likely", NA
+        ))))
+
+mexico2$cp7F <- ifelse(
+ mexico2$cp7 == 4, "Unlikely", 
+  ifelse(
+    mexico2$cp7 == 3, "Somewhat Likely",
+    ifelse(
+      mexico2$cp7 == 2, "Likely", 
+      ifelse(
+        mexico2$cp7 == 1, "Very Likely", NA
+        ))))
+
+mexico2$cp6F <- ifelse(
+ mexico2$cp6 == 4, "Unlikely", 
+  ifelse(
+    mexico2$cp6 == 3, "Somewhat Likely",
+    ifelse(
+      mexico2$cp6 == 2, "Likely", 
+      ifelse(
+        mexico2$cp6 == 1, "Very Likely", NA
+        ))))
+
+mexico2$cp20F <- ifelse(
+ mexico2$cp20 == 4, "Unlikely", 
+  ifelse(
+    mexico2$cp20 == 3, "Somewhat Likely",
+    ifelse(
+      mexico2$cp20 == 2, "Likely", 
+      ifelse(
+        mexico2$cp20 == 1, "Very Likely", NA
+        ))))
+
+mexico2$b21aF <- ifelse(
+  mexico2$b21a == 1, "Not at all",
+  ifelse(
+    mexico2$b21a == 2, "2",
+    ifelse(
+      mexico2$b21a == 3, "3",
+      ifelse(
+        mexico2$b21a == 4, "4",
+        ifelse(
+          mexico2$b21a == 5, "5",
+          ifelse(
+            mexico2$b21a == 6, "6",
+            ifelse(
+              mexico2$b21a == 7, "A Lot", NA
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+mexico2$b32F <- ifelse(
+  mexico2$b32 == 1, "Not at all",
+  ifelse(
+    mexico2$b32 == 2, "2",
+    ifelse(
+      mexico2$b32 == 3, "3",
+      ifelse(
+        mexico2$b32 == 4, "4",
+        ifelse(
+          mexico2$b32 == 5, "5",
+          ifelse(
+            mexico2$b32 == 6, "6",
+            ifelse(
+              mexico2$b32 == 7, "A Lot", NA
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+mexico2$b13F <- ifelse(
+  mexico2$b13 == 1, "Not at all",
+  ifelse(
+    mexico2$b13 == 2, "2",
+    ifelse(
+      mexico2$b13 == 3, "3",
+      ifelse(
+        mexico2$b13 == 4, "4",
+        ifelse(
+          mexico2$b13 == 5, "5",
+          ifelse(
+            mexico2$b13 == 6, "6",
+            ifelse(
+              mexico2$b13 == 7, "A Lot", NA
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+mexico2$b21F <- ifelse(
+ mexico2$b21 == 1, "Not at all",
+  ifelse(
+    mexico2$b21 == 2, "2",
+    ifelse(
+      mexico2$b21 == 3, "3",
+      ifelse(
+        mexico2$b21 == 4, "4",
+        ifelse(
+          mexico2$b21 == 5, "5",
+          ifelse(
+            mexico2$b21 == 6, "6",
+            ifelse(
+              mexico2$b21 == 7, "A Lot", NA
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+mexico2$pol1F <- ifelse(
+ mexico2$pol1 == 4, "Never", 
+  ifelse(
+    mexico2$pol1 == 3, "A Little",
+    ifelse(
+      mexico2$pol1 == 2, "Some", 
+      ifelse(
+        mexico2$pol1 == 1, "A Lot", NA
+        ))))
+
+#use this to make IVs a factor variable with specific levels.
+mexico2$gi0F <- factor(mexico2$gi0F, levels = c("Never",
+                                                "Rarely",
+                                                "Somewhat Likely",
+                                                "Likely",
+                                                "Daily"))
+
+mexico2$pol1F <- factor(mexico2$pol1F, levels=c("Never", 
+                                              "A Little",
+                                              "Some", 
+                                              "A Lot"))
+
+mexico2$cp8F <- factor(mexico2$cp8F, levels=c("Unlikely", 
+                                              "Somewhat Likely",
+                                              "Likely", 
+                                              "Very Likely"))
+
+mexico2$cp13F <- factor(mexico2$cp13F, levels=c("Unlikely", 
+                                              "Somewhat Likely",
+                                              "Likely", 
+                                              "Very Likely"))
+
+mexico2$cp7F <- factor(mexico2$cp7F, levels=c("Unlikely", 
+                                              "Somewhat Likely",
+                                              "Likely", 
+                                              "Very Likely"))
+
+mexico2$cp6F <- factor(mexico2$cp6F, levels=c("Unlikely", 
+                                              "Somewhat Likely",
+                                              "Likely", 
+                                              "Very Likely"))
+
+mexico2$cp20F <- factor(mexico2$cp20F, levels=c("Unlikely", 
+                                              "Somewhat Likely",
+                                              "Likely", 
+                                              "Very Likely"))
+
+mexico2$b21aF <- factor(mexico2$b21aF, levels=c("Not at all", 
+                                                "2",
+                                                "3",
+                                                "4",
+                                                "5",
+                                                "6",
+                                                "A Lot"
+))
+
+mexico2$b32F <- factor(mexico2$b32F, levels=c("Not at all", 
+                                                "2",
+                                                "3",
+                                                "4",
+                                                "5",
+                                                "6",
+                                                "A Lot"
+))
+
+mexico2$b13F <- factor(mexico2$b13F, levels=c("Not at all", 
+                                                "2",
+                                                "3",
+                                                "4",
+                                                "5",
+                                                "6",
+                                                "A Lot"
+))
+
+mexico2$b21F <- factor(mexico2$b21F, levels=c("Not at all", 
+                                                "2",
+                                                "3",
+                                                "4",
+                                                "5",
+                                                "6",
+                                                "A Lot"
+))
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+#Nonfixed
+cp8nf <- polr(cp8F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp8coef <- exp(coef(cp8nf))
+
+cp13nf <- polr(cp13F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp13coef <- exp(coef(cp13nf))
+
+cp7nf <- polr(cp7F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp7coef <- exp(coef(cp7nf))
+
+cp6nf <- polr(cp6F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp6coef <- exp(coef(cp6nf))
+
+cp20nf <- polr(cp20F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp20coef <- exp(coef(cp20nf))
+
+b32nf <- polr(b32F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b32coef <- exp(coef(b32nf))
+
+b13nf <- polr(b13F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b13coef <- exp(coef(b13nf))
+
+b21nf <- polr(b21F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b21coef <- exp(coef(b21nf))
+
+b21anf <- polr(b21aF ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b21acoef <- exp(coef(b21anf))
+
+vb10nf <- glm(vb10 ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + norte, 
+               data = mexico2, 
+               family = binomial(link = 'logit')
+)
+vb10coef = exp(coef(vb10nf))
+
+#regression table for nonfixed civic engagement
+stargazer(cp8nf, cp13nf, cp7nf, cp6nf, cp20nf, vb10nf,
+          coef = list(cp8coef, cp13coef, cp7coef, cp6coef, cp20coef, vb10coef),
+          column.labels = c("Community", "Parent", "Party Mtg", "RelOrgs", "WomenGrp", "PolID"),
+          p.auto = F,
+          align = T,
+          type = "text",
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          dep.var.caption = c("Civic Engagement"),
+          covariate.labels = c("CCT", "Gender", "Age", "Income", "Religion", "Number of Children", "Education", "Party Trust", "Local Government Trust", "Leg Trust", "Exec Trust", "Urban/Rural"),
+          title = "Table 1: Nonfixed Multilevel Ordinal Logistic Regression, Civic Engagement"
+)
+
+stargazer(b32nf, b13nf, b21nf, b21anf,
+          coef = list(b32coef, b13coef, b21coef, b21acoef),
+          column.labels = c("LGovTrust", "LegTrust", "PolTrust", "ExecTrust"),
+          p.auto = F,
+          align = T, 
+          type = "text", 
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          dep.var.caption = c("Trust"),
+          covariate.labels = c("CCT", "Gender", "Age", "Income", "Religion", "Number of Children", "Education", "Urban/Rural")
+)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+#Fixed
+cp8fix <- polr(cp8F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte,  #these are the yearly fixed effects
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp8fixcoef <- exp(coef(cp8fix))
+
+cp13fix <- polr(cp13F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur+ factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp13fixcoef <- exp(coef(cp13fix))
+
+cp7fix <- polr(cp7F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp7fixcoef <- exp(coef(cp7fix))
+
+cp6fix <- polr(cp6F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur+ factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp6fixcoef <- exp(coef(cp6fix))
+
+cp20fix <- polr(cp20F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur+ factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp20fixcoef <- exp(coef(cp20fix))
+
+b32fix <- polr(b32F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b32fixcoef <- exp(coef(b32fix))
+
+b13fix <- polr(b13F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b13fixcoef <- exp(coef(b13fix))
+
+b21fix <- polr(b21F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b21fixcoef <- exp(coef(b21fix))
+
+b21afix <- polr(b21aF ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b21afixcoef <- exp(coef(b21afix))
+
+vb10fix <- glm(vb10 ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte, 
+               data = mexico2, 
+               family = binomial(link = 'logit')
+)
+vb10fixcoef = exp(coef(vb10fix))
+
+#regression table for fixed effects - civic engagement
+stargazer(cp8fix, cp13fix, cp7fix, cp6fix, cp20fix,
+          coef = list(cp8fixcoef, cp13fixcoef, cp7fixcoef, cp6fixcoef, cp20fixcoef),
+          column.labels = c("Community", "PartyMtg", "Parent", "RelOrgs", "WomenGrp"),
+          p.auto = F,
+          align = T,
+          type = "text",
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          dep.var.caption = c("Civic Engagement"),
+          covariate.labels = c("CCT", "Gender", "Age", "Income", "Religion", "Number of Children", "Education", "Party Trust", "Local Government Trust", "Leg Trust", "Exec Trust", "Urban/Rural", "2012", "2014", "2016", "2018"),
+          title = "Table 1: Mexico Regression, Civic Engagement",
+          add.lines=list(c("AIC", round(AIC(cp8fix), 1), round(AIC(cp13fix), 1), round(AIC(cp7fix), 1), round(AIC(cp6fix), 1), round(AIC(cp20fix), 1)), c("BIC", round(BIC(cp8fix), 1), round(BIC(cp13fix), 1), round(BIC(cp7fix), 1), round(BIC(cp6fix), 1), round(BIC(cp20fix), 1)))
+)
+
+stargazer(b32fix, b13fix, b21fix, b21afix,
+          coef = list(b32fixcoef, b13fixcoef, b21fixcoef, b21afixcoef),
+          column.labels = c("LGovTrust", "LegTrust", "PolTrust", "ExecTrust"),
+          p.auto = F,
+          align = T, 
+          type = "text", 
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          covariate.labels = c("CCT", "Gender", "Age", "Income", "Religion", "Number of Children", "Education", "Urban/Rural", "2012", "2014", "2016", "2018"),
+          title = "Table 3: Mexico Regression, Trust",
+          dep.var.caption = c("Trust"),
+          add.lines = list(c("AIC", round(AIC(b32fix), 1), round(AIC(b13fix), 1), round(AIC(b21fix), 1), round(AIC(b21afix), 1)), c("BIC", round(BIC(b32fix), 1), round(BIC(b13fix), 1), round(BIC(b21fix), 1),round(BIC(b21afix), 1)))
+)
+```
+
+```{r}
+#Nonfixed Political Participation
+prot3nf <- glm(prot3 ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a, 
+               data = mexico2, 
+               family = binomial(link = 'logit')
+)
+prot3coef = exp(coef(prot3nf))
+
+vb2nf <- glm(vb2 ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a, 
+               data = mexico2, 
+               family = binomial(link = 'logit')
+)
+vb2coef = exp(coef(vb2nf))
+
+pol1nf <- polr(pol1F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+pol1coef = exp(coef(pol1nf))
+
+
+gi0nf <- polr(gi0F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a,
+              data = mexico2,
+              method = "logistic", Hess = TRUE)
+gi0coef = exp(coef(gi0nf))
+
+
+#Regression for Political Participation - nonfixed
+stargazer(prot3nf, vb2nf, pol1nf, gi0nf,
+          coef = list(prot3coef, vb2coef, pol1coef, gi0coef),
+          p.auto = F,
+          align = T,
+          type = "text"
+)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+#Fixed Political Participation
+prot3fix <- glm(prot3 ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte, 
+               data = mexico2, 
+               family = binomial(link = 'logit')
+)
+prot3fixcoef = exp(coef(prot3fix))
+
+vb2fix <- glm(vb2 ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte, 
+               data = mexico2, 
+               family = binomial(link = 'logit')
+)
+vb2fixcoef = exp(coef(vb2fix))
+
+pol1fix <- polr(pol1F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+pol1fixcoef = exp(coef(pol1fix))
+
+gi0fix <- polr(gi0F ~ cct1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte,
+               data = mexico2,
+               method = "logistic", Hess = T)
+gi0fixcoef = exp(coef(gi0fix))
+
+stargazer(prot3fix, vb2fix, pol1fix, gi0fix, vb10fix,
+          coef = list(prot3fixcoef, vb2fixcoef, pol1fixcoef, gi0fixcoef, vb10fixcoef),
+          p.auto = F,
+          align = T,
+          type = "text",
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          dep.var.caption = c("Political Participation"),
+          covariate.labels = c("CCT", "Gender", "Age", "Income", "Religion", "Number of Children", "Education", "Party Trust", "Local Government Trust", "Leg Trust", "Exec Trust", "Urban/Rural", "2012", "2014", "2016", "2018"),
+          title = "Table 2: Mexico Regression, Political Participation",
+          column.labels = c("Protest", "VotedLastYear", "PolInterest", "WatchNews", "PolID"),
+          add.lines=list(c("AIC", round(AIC(prot3fix), 1), round(AIC(vb2fix), 1), round(AIC(pol1fix), 1), round(AIC(gi0fix), 1), round(AIC(vb10fix), 1)), c("BIC", round(BIC(prot3fix), 1), round(BIC(vb2fix), 1), round(BIC(pol1fix), 1), round(BIC(gi0fix), 1), round(BIC(vb10fix), 1)))
+)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+##Interactions - Civic
+cp8fixint <- polr(cp8F ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp8fixintcoef <- exp(coef(cp8fixint))
+
+cp13fixint <- polr(cp13F ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp13fixintcoef <- exp(coef(cp13fixint))
+
+cp7fixint <- polr(cp7F ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp7fixintcoef <- exp(coef(cp7fixint))
+
+cp6fixint <- polr(cp6F ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp6fixintcoef <- exp(coef(cp6fixint))
+
+cp20fixint <- polr(cp20F ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp20fixintcoef <- exp(coef(cp20fixint))
+
+b32fixint <- polr(b32F ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b32fixintcoef <- exp(coef(b32fixint))
+
+b13fixint <- polr(b13F ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b13fixintcoef <- exp(coef(b13fixint))
+
+b21fixint <- polr(b21F ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b21fixintcoef <- exp(coef(b21fixint))
+
+b21afixint <- polr(b21aF ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b21afixintcoef <- exp(coef(b21afixint))
+
+vb10fixint <- glm(vb10 ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte, 
+               data = mexico2, 
+               family = binomial(link = 'logit')
+)
+vb10fixintcoef = exp(coef(vb10fixint))
+
+stargazer(cp8fixint, cp13fixint, cp7fixint, cp6fixint, cp20fixint,
+          coef = list(cp8fixintcoef, cp13fixintcoef, cp7fixintcoef, cp6fixintcoef, cp20fixintcoef),
+          column.labels = c("Community", "PartyMtg", "Parent", "RelOrgs", "WomenGrp"),
+          p.auto = F,
+          align = T,
+          type = "text",
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          dep.var.caption = c("Civic Engagement"),
+          covariate.labels = c("CCT", "Gender", "Age", "Income", "Religion", "Number of Children", "Education", "Party Trust", "Local Government Trust", "Leg Trust", "Exec Trust", "Urban/Rural", "2012", "2014", "2016", "2018", "norte", "CCT x Gender"),
+          title = "Table 7: Mexico Regression with Gender Interaction, Civic Engagement",
+          add.lines=list(c("AIC", round(AIC(cp8fixint), 1), round(AIC(cp13fixint), 1), round(AIC(cp7fixint), 1), round(AIC(cp6fixint), 1), round(AIC(cp20fixint), 1)), c("BIC", round(BIC(cp8fixint), 1), round(BIC(cp13fixint), 1), round(BIC(cp7fixint), 1), round(BIC(cp6fixint), 1), round(BIC(cp20fixint), 1)))
+)
+
+#interactions - trust
+stargazer(b32fixint, b13fixint, b21fixint, b21afixint,
+          coef = list(b32fixintcoef, b13fixintcoef, b21fixintcoef, b21afixintcoef),
+          column.labels = c("LGovTrust", "LegTrust", "PolTrust", "ExecTrust"),
+          p.auto = F,
+          align = T,
+          type = "text",
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          dep.var.caption = c("Civic Engagement"),
+          covariate.labels = c("CCT", "Gender", "Age", "Income", "Religion", "Number of Children", "Education", "Urban/Rural", "2012", "2014", "2016", "2018", "norte", "CCT x Gender"),
+          title = "Table 9: Mexico Regression with Gender Interaction, Trust",
+          add.lines = list(c("AIC", round(AIC(b32fixint), 1), round(AIC(b13fixint), 1), round(AIC(b21fixint), 1), round(AIC(b21afixint), 1)), c("BIC", round(BIC(b32fixint), 1), round(BIC(b13fixint), 1), round(BIC(b21fixint), 1),round(BIC(b21afixint), 1)))
+)
+
+#interactions - pol participation
+prot3fixint <- glm(prot3 ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte, 
+               data = mexico2, 
+               family = binomial(link = 'logit')
+)
+prot3fixintcoef = exp(coef(prot3fixint))
+
+vb2fixint <- glm(vb2 ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte, 
+               data = mexico2, 
+               family = binomial(link = 'logit')
+)
+vb2fixintcoef = exp(coef(vb2fixint))
+
+pol1fixint <- polr(pol1F ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+pol1fixintcoef = exp(coef(pol1fixint))
+
+gi0fixint <- polr(gi0F ~ cct1 + cct1*q1 + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte,
+               data = mexico2,
+               method = "logistic", Hess = T)
+gi0fixintcoef = exp(coef(gi0fixint))
+
+stargazer(prot3fixint, vb2fixint, pol1fixint, gi0fixint, vb10fixint,
+          coef = list(prot3fixintcoef, vb2fixintcoef, pol1fixintcoef, gi0fixintcoef, vb10fixintcoef),
+          p.auto = F,
+          align = T,
+          type = "text",
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          dep.var.caption = c("Political Participation"),
+          covariate.labels = c("CCT", "Gender", "Age", "Income", "Religion", "Number of Children", "Education", "Party Trust", "Local Government Trust", "Leg Trust", "Exec Trust", "Urban/Rural", "2012", "2014", "2016", "2018", "norte", "CCT x Gender"),
+          title = "Table 8: Mexico Regression with Gender Interaction, Political Participation",
+          column.labels = c("Protest", "VotedLastYear", "PolInterest", "WatchNews", "PolID"),
+          add.lines=list(c("AIC", round(AIC(prot3fixint), 1), round(AIC(vb2fixint), 1), round(AIC(pol1fixint), 1), round(AIC(gi0fixint), 1), round(AIC(vb10fixint), 1)), c("BIC", round(BIC(prot3fixint), 1), round(BIC(vb2fixint), 1), round(BIC(pol1fixint), 1), round(BIC(gi0fixint), 1), round(BIC(vb10fixint), 1)))
+)
+```
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+#Education Interactions - Civic
+cp8fixinted <- polr(cp8F ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp8fixintedcoef <- exp(coef(cp8fixinted))
+
+cp13fixinted <- polr(cp13F ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp13fixintedcoef <- exp(coef(cp13fixinted))
+
+cp7fixinted <- polr(cp7F ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp7fixintedcoef <- exp(coef(cp7fixinted))
+
+cp6fixinted <- polr(cp6F ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp6fixintedcoef <- exp(coef(cp6fixinted))
+
+cp20fixinted <- polr(cp20F ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+cp20fixintedcoef <- exp(coef(cp20fixinted))
+
+b32fixinted <- polr(b32F ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b32fixintedcoef <- exp(coef(b32fixinted))
+
+b13fixinted <- polr(b13F ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b13fixintedcoef <- exp(coef(b13fixinted))
+
+b21fixinted <- polr(b21F ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b21fixintedcoef <- exp(coef(b21fixinted))
+
+b21afixinted <- polr(b21aF ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + ur + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+b21afixintedcoef <- exp(coef(b21afixinted))
+
+vb10fixinted <- glm(vb10 ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + b21 + b32 + b13 + b21a + ur + factor(year) + norte, 
+               data = mexico2, 
+               family = binomial(link = 'logit')
+)
+vb10fixintedcoef = exp(coef(vb10fixinted))
+
+stargazer(cp8fixinted, cp13fixinted, cp7fixinted, cp6fixinted, cp20fixinted,
+          coef = list(cp8fixintedcoef, cp13fixintedcoef, cp7fixintedcoef, cp6fixintedcoef, cp20fixintedcoef),
+          column.labels = c("Community", "Parent", "PartyMtg", "RelOrgs", "WomenGrp"),
+          p.auto = F,
+          align = T,
+          type = "text",
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          dep.var.caption = c("Civic Engagement"),
+          covariate.labels = c("CCT", "Gender", "Age", "Income", "Religion", "Number of Children", "Education", "Party Trust", "Local Government Trust", "Leg Trust", "Exec Trust", "Urban/Rural", "2012", "2014", "2016", "2018", "norte", "CCT x Education"),
+          title = "Table 13: Mexico Regression with Education Interaction, Civic Engagement"
+)
+
+#interactions - trust
+stargazer(b32fixinted, b13fixinted, b21fixinted, b21afixinted,
+          coef = list(b32fixintedcoef, b13fixintedcoef, b21fixintedcoef, b21afixintedcoef),
+          column.labels = c("LGovTrust", "LegTrust", "PolTrust", "ExecTrust"),
+          p.auto = F,
+          align = T,
+          type = "text",
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          dep.var.caption = c("Civic Engagement"),
+          covariate.labels = c("CCT", "Gender", "Age", "Income", "Religion", "Number of Children", "Education", "Urban/Rural", "2012", "2014", "2016", "2018", "norte", "CCT x Education"),
+          title = "Table 15: Mexico Regression with Education Interaction, Trust"
+)
+
+#interactions - pol participation
+prot3fixinted <- glm(prot3 ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte, 
+               data = mexico2, 
+               family = binomial(link = 'logit')
+)
+prot3fixintedcoef = exp(coef(prot3fixinted))
+
+vb2fixinted <- glm(vb2 ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte, 
+               data = mexico2, 
+               family = binomial(link = 'logit')
+)
+vb2fixintedcoef = exp(coef(vb2fixinted))
+
+pol1fixinted <- polr(pol1F ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte,
+             data = mexico2,
+             method = "logistic", Hess=TRUE)
+pol1fixintedcoef = exp(coef(pol1fixinted))
+
+gi0fixinted <- polr(gi0F ~ cct1 + cct1*ed + q1 + q2 + q10 + q5b + q12a + ed + ur + b21 + b32 + b13 + b21a + factor(year) + norte,
+               data = mexico2,
+               method = "logistic", Hess = T)
+gi0fixintedcoef = exp(coef(gi0fixinted))
+
+stargazer(prot3fixinted, vb2fixinted, pol1fixinted, gi0fixinted, vb10fixinted,
+          coef = list(prot3fixintedcoef, vb2fixintedcoef, pol1fixintedcoef, gi0fixintedcoef, vb10fixintedcoef),
+          p.auto = F,
+          align = T,
+          type = "text",
+          model.names = F,
+          model.numbers = F,
+          dep.var.labels.include = F,
+          dep.var.caption = c("Political Participation"),
+          covariate.labels = c("CCT", "Gender", "Age", "Income", "Religion", "Number of Children", "Education", "Party Trust", "Local Government Trust", "Leg Trust", "Exec Trust", "Urban/Rural", "2012", "2014", "2016", "2018", "norte", "CCT x Education"),
+          title = "Table 14: Mexico Regression with Education Interaction, Political Participation",
+          column.labels = c("Protest", "VotedLastYear", "PolInterest", "WatchNews", "PolID")
+)
+
+summary(cp8fix)
+```

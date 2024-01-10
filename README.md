@@ -4,7 +4,7 @@
 
 - Reach me at: **dhs342@sas.upenn.edu**
 
-- Resume: [https://tinyurl.com/dhsresume](https://tinyurl.com/dhsresume)
+- Resume: [http://tinyurl.com/dhs342cv](http://tinyurl.com/dhs342cv)
 
 <h3 align="left">Notes about the folders in this github</h3>
 
